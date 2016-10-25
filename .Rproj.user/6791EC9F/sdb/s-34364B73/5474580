@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "library(\"zoo\")\nlibrary(\"xts\")\nlibrary(\"xtsExtra\")\nlibrary(\"TTR\")\nlibrary(\"quantmod\")\nlibrary(\"pryr\")\nsource(\"WZ-TA.R\")\nlibrary(\"devtools\")\npar(family='STKaiti')#中文字体\ndata<- as.xts(read.zoo(file=\"data.csv\",sep = \";\", format = \"%Y/%m/%d\"))#从csv导入数据\ndimnames(data) <- list(c(1:2),c(\"NET\",\"SNET\"))#设定净值列名\nindex(data) <- as.POSIXct(index(data))#将时间序列的时间类型从\"Date\" 转成 \"POSIXct\" \"POSIXt\"\ndata<- apply.weekly(data,last)#转为周净值\n#data<- getSymbols(\"300170.sz\",from=Sys.Date() -90,auto.assign = FALSE)#从雅虎导入数据\n\nSNET <- data[,\"SNET\"]#净值序列\nchartSeries(SNET,type=\"line\",theme = \"white\")\nlegend()\nplot.xts(SNET)#画净值曲线\nmeasure=vector(mode=\"numeric\",length=8);#存储结果\n\n\nmeasure[1]= (as.numeric(last(SNET))/as.numeric(first(SNET)))*(52/nweeks(SNET))-1;#Annualized Yield 年化收益率\nmeasure[2]=(52^0.5)*std(TS(2:end,1)./TS(1:end-1,1)-1);#Annualized STD\n\nmeasure[3]=min(dra(:,2));#Maximum Drawdown\n#measure(4)=(TS(end)/TS(1)-1)/measure(3);#Calmar Ratio\nmeasure(5)=(measure(1)-0.03)/measure(2);#Annualized Sharpe Ratio\nmeasure(6)=Maximum_Recovery_Period(TS);#Maximum Recovery Period\nfinder=find(TS(2:end)./TS(1:end-1)-1<0);\nmeasure(7)=std(TS(finder+1,1)./TS(finder,1)-1); #下偏矩\nmeasure(8)=(measure(1)-0.03)/(measure(7)*52^0.5); #索提诺比率\n\nplot(TS,'r','linewidth',3)\n#xlabel('交易日')\nylabel('净值')\nget(gca, 'ylabel')\nylim([min(TS),max(TS)])\n\naa=max(TS);\nbb=min(TS);\ngap=(aa-bb)/12;\nif measure(1)>0\npos=max(TS)-(1:8)*gap;\nelse\n  pos=min(TS)+(7:-1:0)*gap;\nend\n\ntext(length(TS)/30,pos(1),['平均收益率=',num2str(100*measure(1)),'%'],'FontSize',10)\ntext(length(TS)/30,pos(2),['收益率标准差=',num2str(100*measure(2)),'%'],'FontSize',10)\ntext(length(TS)/30,pos(3),['最大回撤=',num2str(measure(3)*100),'%'],'FontSize',10)\ntext(length(TS)/30,pos(4),['夏普比率=',num2str(measure(5))],'FontSize',10)\ntext(length(TS)/30,pos(5),['最大回撤=',num2str(measure(6))],'FontSize',10)\ntext(length(TS)/30,pos(6),['负向波动率=',num2str(100*measure(7)),'%'],'FontSize',10)\ntext(length(TS)/30,pos(7),['索比诺比率=',num2str(measure(8))],'FontSize',10)\n%text(length(TS)/30,pos(4),['Calmar Ratio=',num2str(measure(4))],'FontSize',8)\n\n% text(length(TS)/30,pos(1),['年化收益率=',num2str(100*measure(1)),'%'],'FontSize',8)\n% text(length(TS)/30,pos(2),['年化波动率=',num2str(100*measure(2)),'%'],'FontSize',8)\n% text(length(TS)/30,pos(3),['最大回撤=',num2str(measure(3)*100),'%'],'FontSize',8)\n% text(length(TS)/30,pos(4),['卡玛比=',num2str(measure(4))],'FontSize',8)\n% text(length(TS)/30,pos(5),['夏普比=',num2str(measure(5))],'FontSize',8)\n% text(length(TS)/30,pos(6),['最大回撤周期=',num2str(measure(6))],'FontSize',8)\n% text(length(TS)/30,pos(7),['负向波动率=',num2str(100*measure(7)),'%'],'FontSize',8)\n% text(length(TS)/30,pos(8),['索提诺比率=',num2str(measure(8))],'FontSize',8)\n\n\nN=floor(size(data,1)/4);\nN1=[1,1+N,1+2*N,1+3*N,4*N];\nti=num2str(data(N1,1));\nset(gca,'XTick',N1);\nset(gca,'XTickLabel',ti);\ntitle('\\fontsize{12}综合业绩指标');\ngrid on",
+    "created" : 1477388280928.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1313413007",
+    "id" : "5474580",
+    "lastKnownWriteTime" : 1477388180,
+    "last_content_update" : 1477388180,
+    "path" : "~/R-Workspaces/WZ/quantmod.R",
+    "project_path" : "quantmod.R",
+    "properties" : {
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
