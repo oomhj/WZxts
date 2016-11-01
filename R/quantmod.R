@@ -6,7 +6,7 @@ library("quantmod")
 #library("tserise")
 library("pryr")
 #source("WZ-TA.R")
-#library("devtools")
+library("devtools")
 data<- as.xts(read.zoo(file="R/data.csv",sep = ";", format = "%Y/%m/%d"))#从csv导入数据
 dimnames(data) <- list(c(1:2),c("NET","SNET"))#设定净值列名
 index(data) <- as.POSIXct(index(data))#将时间序列的时间类型从"Date" 转成 "POSIXct" "POSIXt"
